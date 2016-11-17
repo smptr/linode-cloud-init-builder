@@ -1,0 +1,8 @@
+mnt/
+.password
+*.raw
+*.raw.xz
+*.iso
+meta-data
+user-data
+.*.sw[po]
