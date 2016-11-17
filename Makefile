@@ -5,10 +5,9 @@ DOMAIN ?= goozbach.net
 FQDN ?= $(NAME).$(DOMAIN)
 USERNAME ?= goozbach
 PASSWORD ?= $(shell cat .password )
-MOUNTPOINT ?= $(shell grep $$(blkid -L CIDATA) /proc/mounts | cut -d ' ' -f 2)
-MNTFOLDER ?= mnt/cidata
 RAWIMAGE ?= Fedora-Atomic-24-20160921.0.x86_64.raw
 IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-24-20160921.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
+MNTFOLDER ?= mnt/cidata
 
 define USERDATA
 #cloud-config
@@ -28,9 +27,7 @@ export USERDATA
 
 .PHONY: all clean nuke volume
 
-all: $(RAWIMAGE) $(NAME)-cidata.iso 
-	@#echo -e "curdir\t= $(CURDIR)/$(MNTFOLDER)"
-	@#echo -e "mount\t= $(MOUNTPOINT)"
+all: $(RAWIMAGE) $(NAME)-cidata.iso volume
 
 $(RAWIMAGE):
 	@echo fetching $(RAWIMAGE).xz
@@ -51,7 +48,7 @@ user-data: Makefile
 	@echo "$$USERDATA" > user-data
 
 clean:
-	rm -f meta-data user-data
+	rm -f meta-data user-data mnt/cidata/*
 
 nuke: clean
 	rm -f $(NAME)-cidata.iso
@@ -60,9 +57,4 @@ nuke: clean
 	rm -f $(RAWIMAGE)
 
 volume: meta-data user-data
-ifeq ($(CURDIR)/$(MNTFOLDER), $(MOUNTPOINT))
-	@echo copying files into volume
-	cp -f meta-data	user-data $(MOUNTPOINT)
-else:
-	@echo "couldn't find mountpoint"
-endif
+	@MOUNTPOINT=$$(grep $$(blkid -L CIDATA) /proc/mounts | cut -d ' '  -f 2); if [[ "$${MOUNTPOINT}" == "$${PWD}/mnt/cidata" ]];  then echo "Copying files into $${MOUNTPOINT}"; cp -f meta-data user-data $${MOUNTPOINT}; else echo "Trying to mount mountpoint"; if mount LABEL=CIDATA $${PWD}/mnt/cidata; then echo "Copying files into $${PWD}/mnt/cidata"; cp -f meta-data user-data $${PWD}/mnt/cidata; else echo "Mount failed"; fi; fi
