@@ -7,7 +7,8 @@ USERNAME ?= goozbach
 PASSWORD ?= $(shell cat .password )
 RAWIMAGE ?= Fedora-Atomic-24-20160921.0.x86_64.raw
 IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-24-20160921.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
-MNTFOLDER ?= mnt/cidata
+CIDATADEV ?= $(shell blkid -L cidata)
+RESETDEV ?= /dev/sdb
 
 define USERDATA
 #cloud-config
@@ -25,9 +26,9 @@ endef
 
 export USERDATA
 
-.PHONY: all clean nuke volume
+.PHONY: all clean nuke image
 
-all: $(RAWIMAGE) $(NAME)-cidata.iso volume
+all: $(RAWIMAGE) $(NAME)-cidata.iso
 
 $(RAWIMAGE):
 	@echo fetching $(RAWIMAGE).xz
@@ -56,5 +57,10 @@ nuke: clean
 37: nuke
 	rm -f $(RAWIMAGE)
 
-volume: meta-data user-data
-	@MOUNTPOINT=$$(grep $$(blkid -L CIDATA) /proc/mounts | cut -d ' '  -f 2); if [[ "$${MOUNTPOINT}" == "$${PWD}/mnt/cidata" ]];  then echo "Copying files into $${MOUNTPOINT}"; cp -f meta-data user-data $${MOUNTPOINT}; else echo "Trying to mount mountpoint"; if mount LABEL=CIDATA $${PWD}/mnt/cidata; then echo "Copying files into $${PWD}/mnt/cidata"; cp -f meta-data user-data $${PWD}/mnt/cidata; else echo "Mount failed"; fi; fi
+image:
+	@echo imaging cidata
+	@dd if=$(NAME)-cidata.iso of=$(CIDATADEV) bs=4k &>/dev/null
+
+reset:
+	@echo resetting vm disk
+	@dd if=$(RAWIMAGE) of=$(RESETDEV) bs=4k &>/dev/null
