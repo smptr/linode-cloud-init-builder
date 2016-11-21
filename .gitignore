@@ -1,8 +1,10 @@
 mnt/
-.password
+.password*
 *.raw
 *.raw.xz
 *.iso
 meta-data
 user-data
 .*.sw[po]
+.ssh/
+ssh-keys

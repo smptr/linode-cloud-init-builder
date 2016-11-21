@@ -5,10 +5,11 @@ DOMAIN ?= goozbach.net
 FQDN ?= $(NAME).$(DOMAIN)
 USERNAME ?= goozbach
 PASSWORD ?= $(shell cat .password )
+ROOTPASSWORD ?= $(shell cat .password.root )
 RAWIMAGE ?= Fedora-Atomic-24-20160921.0.x86_64.raw
 IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-24-20160921.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
-CIDATADEV ?= $(shell blkid -L cidata)
-RESETDEV ?= /dev/sdb
+CIDATADEV ?= $(shell blkid -L cidata -o device)
+RESETDEV ?= $(shell blkid -t TYPE=LVM2_member -o device | cut -c 1-8)
 
 define USERDATA
 #cloud-config
@@ -19,8 +20,9 @@ ssh_authorized_keys:
   - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdbE5og2wY4cVF4hZ/n299rgm7wwVxdY6zD59R4DFyi28RPV5/QwWsIRrnuq91a7xmVORUZOQcje9Y68GHKSEKMdX3cgWCK7kUl/KylVh8sbGEKAUd8dyUbVMPjrgMSV2GVFQldjatkU+MSijo4VehcQdZ6uVEnF2cDVl3+rSpK3M34KUPrSGbCfIQ/iqL6WsmvHnw5RDMG9RWZHdzwOR8mpZWdWPEqeFgsubpU6mfC7psdVKlTV2TSLot1gCD4yOdYT4VRa5JPzzyS/w2O+6Qmb7nwyHToa1ttPxjQcbTvQyMWt4FFQAPRRKD6sTQ/AosvNKjKzWlC7GKTPhplay7 derekcarter@10-200-28-185.employee-macbook.bluehost.com'
 chpasswd:
   list: |
-     root:$(PASSWORD)
-     goozbach:$(PASSWORD)
+    root:$(PASSWORD)
+    goozbach:$(ROOTPASSWORD)
+  expire: False
 endef
 
 export USERDATA
@@ -46,6 +48,7 @@ meta-data: Makefile
 user-data: Makefile
 	@echo generating user-data
 	@echo "$$USERDATA" > user-data
+	@cat ssh-keys >> user-data
 
 clean:
 	rm -f meta-data user-data mnt/cidata/*
@@ -58,8 +61,8 @@ nuke: clean
 
 image: $(NAME)-cidata.iso
 	@echo imaging cidata
-	@dd if=$(NAME)-cidata.iso of=$(CIDATADEV) bs=4k &>/dev/null
+	dd if=$(NAME)-cidata.iso of=$(CIDATADEV) bs=4k &>/dev/null
 
 reset:
 	@echo resetting vm disk
-	@dd if=$(RAWIMAGE) of=$(RESETDEV) bs=4k &>/dev/null
+	dd if=$(RAWIMAGE) of=$(RESETDEV) bs=4k &>/dev/null
