@@ -6,8 +6,8 @@ FQDN ?= $(NAME).$(DOMAIN)
 USERNAME ?= goozbach
 PASSWORD ?= $(shell cat .password )
 ROOTPASSWORD ?= $(shell cat .password.root )
-RAWIMAGE ?= Fedora-Atomic-24-20160921.0.x86_64.raw
-IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-24-20160921.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
+RAWIMAGE ?= Fedora-Atomic-25-20161221.0.x86_64.raw
+IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-25-20161221.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
 CIDATADEV ?= $(shell blkid -L cidata -o device)
 RESETDEV ?= $(shell blkid -t TYPE=LVM2_member -o device | cut -c 1-8)
 
@@ -55,9 +55,7 @@ clean:
 
 nuke: clean
 	rm -f $(NAME)-cidata.iso
-
-37: nuke
-	rm -f $(RAWIMAGE)
+	rm -f *.raw
 
 image: $(NAME)-cidata.iso
 	@echo imaging cidata
