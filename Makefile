@@ -27,9 +27,11 @@ endef
 
 export USERDATA
 
-.PHONY: all clean nuke image
+.PHONY: all clean nuke image fetch
 
 all: $(RAWIMAGE) $(NAME)-cidata.iso
+
+fetch: $(RAWIMAGE)
 
 $(RAWIMAGE):
 	@echo fetching $(RAWIMAGE).xz
