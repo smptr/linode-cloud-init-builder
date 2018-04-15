@@ -1,13 +1,13 @@
 SHELL = /bin/bash
 UUID ?= $(shell uuidgen)
-NAME ?= rishi
-DOMAIN ?= goozbach.net
+NAME ?= atm
+DOMAIN ?= smptr
 FQDN ?= $(NAME).$(DOMAIN)
-USERNAME ?= goozbach
+USERNAME ?= mats
 PASSWORD ?= $(shell cat .password )
 ROOTPASSWORD ?= $(shell cat .password.root )
-RAWIMAGE ?= Fedora-Atomic-25-20161221.0.x86_64.raw
-IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/Fedora-Atomic-25-20161221.0/CloudImages/x86_64/images/$(RAWIMAGE).xz
+RAWIMAGE ?= Fedora-Atomic-27-20180326.1
+IMGURL ?= https://download.fedoraproject.org/pub/alt/atomic/stable/$(RAWIMAGE)/CloudImages/x86_64/images/$(RAWIMAGE).x86_64.raw.xz
 CIDATADEV ?= $(shell blkid -L cidata -o device)
 RESETDEV ?= $(shell blkid -t TYPE=LVM2_member -o device | cut -c 1-8)
 
@@ -16,12 +16,12 @@ define USERDATA
 user: $(USERNAME)
 ssh_pwauth: False
 ssh_authorized_keys:
-  - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAEAQDThPJ0cSl24omxvlbb5VQW4oVHYxA2Q5ImnD3g6zydbyvT+BY7KftyxC/iXh1cvnSK3ATs2A/1uPjbcbkub5GVcmG6uxSBAOCAx3h94N3vBnk6e0P0+1OPnrIbzrzmH882YgGM/hckIWMPN0V2NQZtURO3s26+e7Mokyg29LBBE/Y5JQ/QhofIuLOhP86e/lWUY2zdrURdBYdbTwyGZ1bw2KvubYbNDBllL/R86r+Ub79tKnYk6rFDxhHs66H2hDq11EwYx+JDUUi0ws0o9SgHOgwwXwGomCqYsQbX/fArSs2ATlIuSHAXpJgycuBYNo128MKUGBdr4lw7DKmnvXdjpMgvuidFmC44ShqFhLqJyees4B/VnJBzvabJpXBsCJJyYzmZwC0fLlYt04uvk5ji7iuVZBR2zg04dsDIcn4nK4vFKNg/z3JlUFkK01d/F221Ojiz6lpWi+dEmf3P4MoNrSCFaS6Ga7RqkhM2kazZXZ0QGoxuboWSWxLJybm4U3yQQ9ntsIm+bjvmMGTECP51u3Avw9Oicfayqz6w9QqSYpk0LZVEKKJBTX2okDDAzqpioUw5aibdu14CfYfJSeWp37nzNyTYHg/O0Q3gBPeUDAGXO0jJyZUtiDZO0fNRQ/MJpu/i09TDYfh+QGRCsgOxv92GAmMbkITCU7XuZyRYmxkScVL0BXpGxsauOZYVMexxVtf638q8gySjhs2qDXZhCCGPb8VS3GX2NbtIgHNIMXtFh968c1IMS7o2U69w/e1bXFrBv9+zl0czL/kEBEHxASt23D98J3IP3bN4T6hrbtGvpMDgnVXqZyS1V+IivSLn96T08b3PXOTt4bKdMvyNXeudYlARGLRe6eSWd0fYzizsGzGVxdHYCQvaolnH/o7KJFEewuAmfBUpxqQ2nu1BvMlFbkL5UAK/wwT8zKjB7mHHsyrSJh80ni8aPhrCuRceHuYll1o4+cFLiKRwNIVWCZhAe+/Eopnu7Llp2cCuKN/snwc6v71bZ6XuWWds37EnWlptd1QysHM7wBB6stvLyAkIgHsUPmVgduGqILhdWrSRGaCXKqiBRh+Y95itS+cEZMXfvQXMVXwr04gCUKoGiU1qUetgUTn3DlJ56DBlegoWmQ/ZWeW6PsqkS4a54+pv8V0RIPaXji5ZVV2VnD/Cov64FNwH2PLudPMb66ehnHba7epme+59jJN1azUlvevdGaK0soMdayXRefcpVRJ+Ve9c8C1eXH9WturC1k5zEbKQt+Iq/H2rfHfqhYmxFLVHyp87Isb41WqVB8uJ8O35eQIQTHyQ/hHvm/xot+ioVDDzYRtYAruUJw4SX5ulPHMl72t5S9y+4yZDDnCghSfx id_dsa-friocorte'
-  - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdbE5og2wY4cVF4hZ/n299rgm7wwVxdY6zD59R4DFyi28RPV5/QwWsIRrnuq91a7xmVORUZOQcje9Y68GHKSEKMdX3cgWCK7kUl/KylVh8sbGEKAUd8dyUbVMPjrgMSV2GVFQldjatkU+MSijo4VehcQdZ6uVEnF2cDVl3+rSpK3M34KUPrSGbCfIQ/iqL6WsmvHnw5RDMG9RWZHdzwOR8mpZWdWPEqeFgsubpU6mfC7psdVKlTV2TSLot1gCD4yOdYT4VRa5JPzzyS/w2O+6Qmb7nwyHToa1ttPxjQcbTvQyMWt4FFQAPRRKD6sTQ/AosvNKjKzWlC7GKTPhplay7 workcompy'
+  - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzHTIFi6J9sstuGmk1jfUIYOcmZ6pf5+IYm4R1Jirn4XUK6qwIjqZZwKi+AA32gZGkc7fevgOoOQBzR/Z4FJ2tNUvwg2mIxtx/4RFYBAevbnCX9GZBz1D30LX9qOQxlXGr+pGWLSTrV36CGMXjVXDA+91Gz2uE1ce7f/mDt9UyT+TJt8mRi1p981i6R+YSc6DeVkH0aXShi184U8lreP68kzoTdJXTnkm3kcKsfasaxumXdMjv1qaXJy/yaMgy20gkfyFlYowLddNuVQeM5thejfbUXp7ySKlc8XQu1daFcpvIohA15CG/GunDXRt9DkIXnf4er2amwlfVDsntxWrX'
+  - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDrQ68VtkRVzTxy9ikhL2Jt3RVYhW8MWlERZoli5gpWbuItkDoLj6i/xoxVtPLFbxRQXpzpUU0aKtZzzSPgiP7xqEn5nWvFI5I2hLuvdU9wcoHfGXGWomaBPyv9al6XN6cDgy2lcvojfigcxpQyO4ztUTRhp9hgRnsSyI/l3iwb62AGoVvE1OGBoHegnbizcNaTCW0GAg3TeJkVGZ+WoyJ2EDZGBPYGEj1+jqtbhUVOgs3zppGT2m7lEIAOjuNhuazKEudkCXiWHA2kWktmFPZN5EugZaHLIvR2F9cvLkkD9ogjs20hd+QQPQOGymUAbZD6BJuL8CXFXLVo3wV0jiLr'
 chpasswd:
   list: |
     root:$(PASSWORD)
-    goozbach:$(ROOTPASSWORD)
+    mats:$(ROOTPASSWORD)
   expire: False
 endef
 
@@ -34,10 +34,10 @@ all: $(RAWIMAGE) $(NAME)-cidata.iso
 fetch: $(RAWIMAGE)
 
 $(RAWIMAGE):
-	@echo fetching $(RAWIMAGE).xz
+	@echo fetching $(RAWIMAGE).x86_64.raw.xz
 	@wget --quiet $(IMGURL)
-	@echo extracting $(RAWIMAGE).xz
-	@unxz $(RAWIMAGE).xz
+	@echo extracting $(RAWIMAGE).x86_64.raw.xz
+	@unxz $(RAWIMAGE).x86_64.raw.xz
 
 $(NAME)-cidata.iso: meta-data user-data
 	@echo generating $@
@@ -65,4 +65,4 @@ image: $(NAME)-cidata.iso
 
 reset:
 	@echo resetting vm disk
-	dd if=$(RAWIMAGE) of=$(RESETDEV) bs=4k &>/dev/null
+	dd if=$(RAWIMAGE).x86_64.raw of=$(RESETDEV) bs=4k &>/dev/null
